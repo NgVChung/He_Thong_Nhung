@@ -2,19 +2,20 @@
   ******************************************************************************
   * @file    stm32f10x_iwdg.c
   * @author  MCD Application Team
-  * @version V3.6.2
-  * @date    17-September-2021
+  * @version V3.5.0
+  * @date    11-March-2011
   * @brief   This file provides all the IWDG firmware functions.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2012 STMicroelectronics.
-  * All rights reserved.
+  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
+  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
   ******************************************************************************
   */
 
@@ -186,3 +187,4 @@ FlagStatus IWDG_GetFlagStatus(uint16_t IWDG_FLAG)
   * @}
   */
 
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
