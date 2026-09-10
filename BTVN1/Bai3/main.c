@@ -12,7 +12,7 @@ int main(void)
 
     // Bật clock cho GPIOA
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-
+    RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
     // PA0-PA7: Input Pull-up
     // 0x8 = Input Pull-up/Pull-down
     GPIOA->CRL = 0x88888888;
@@ -22,7 +22,7 @@ int main(void)
 
     // PA8-PA15: Output Push-pull, 50 MHz
     // 0x3 = Output Push-pull
-    GPIOA->CRH = 0x33333333;
+    GPIOB->CRH = 0x33333333;
 
     while (1)
     {
@@ -33,7 +33,7 @@ int main(void)
         output_data = (~input_data) & 0xFF;
 
         // Ghi dữ liệu đã đảo ra PA8-PA15
-        GPIOA->ODR = (GPIOA->ODR & 0x00FF) |
+        GPIOB->ODR = (GPIOB->ODR & 0x00FF) |
                      ((uint16_t)output_data << 8);
     }
 } 
