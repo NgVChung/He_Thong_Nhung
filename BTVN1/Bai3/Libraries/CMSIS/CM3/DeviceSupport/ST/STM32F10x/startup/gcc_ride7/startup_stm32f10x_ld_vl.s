@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file      startup_stm32f10x_ld_vl.s
   * @author    MCD Application Team
-  * @version   V3.5.0
-  * @date      11-March-2011
+  * @version   V3.5.1
+  * @date      08-September-2021
   * @brief     STM32F10x Low Density Value Line Devices vector table for RIDE7
   *            toolchain.
   *            This module performs:
@@ -18,14 +18,13 @@
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * Copyright (c) 2011 STMicroelectronics.
+  * All rights reserved.
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
   ******************************************************************************
   */
     
@@ -380,4 +379,3 @@ g_pfnVectors:
   .weak  TIM7_IRQHandler
   .thumb_set TIM7_IRQHandler,Default_Handler  
   
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
