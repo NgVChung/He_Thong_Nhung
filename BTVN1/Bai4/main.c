@@ -7,7 +7,8 @@ int main(void)
 
     
     GPIOA->CRL &= ~(0xF << 28);
-    GPIOA->CRL |=  (0x4 << 28);
+    GPIOA->CRL |=  (0x8 << 28);
+    GPIOA->ODR &= ~(1 << 7);
 
     GPIOA->CRH &= ~(0xF << 0);
     GPIOA->CRH |=  (0x2 << 0);
