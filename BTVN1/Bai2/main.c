@@ -3,7 +3,6 @@
 void delay_ms(volatile uint32_t ms) {
     while (ms--) {
         for (volatile uint32_t i = 0; i < 1500; i++) {
-            __asm__ volatile ("nop");
         }
     }
 }

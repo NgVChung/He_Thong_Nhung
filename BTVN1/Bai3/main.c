@@ -20,7 +20,7 @@ int main(void)
     // Chọn Pull-up cho PA0-PA7
     GPIOA->ODR |= 0x000000FF;
 
-    // PA8-PA15: Output Push-pull, 50 MHz
+    // PB8-PB15: Output Push-pull, 50 MHz
     // 0x3 = Output Push-pull
     GPIOB->CRH = 0x33333333;
 
@@ -30,9 +30,9 @@ int main(void)
         input_data = GPIOA->IDR & 0x00FF;
 
         // Đảo dữ liệu: 0 -> 1, 1 -> 0
-        output_data = (~input_data) & 0xFF;
+        output_data = (~input_data) & 0x00FF;
 
-        // Ghi dữ liệu đã đảo ra PA8-PA15
+        // Ghi dữ liệu đã đảo ra PB8-PB15
         GPIOB->ODR = (GPIOB->ODR & 0x00FF) |
                      ((uint16_t)output_data << 8);
     }

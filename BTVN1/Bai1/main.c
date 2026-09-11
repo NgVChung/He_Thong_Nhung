@@ -1,11 +1,7 @@
 #include "stm32f10x.h"
-
-// Hàm delay đơn giản bằng vòng lặp vô hướng (dùng volatile để tránh bị GCC tối ưu hóa)
 void delay_ms(volatile uint32_t delay) {
     while (delay--) {
-        for (volatile int i = 0; i < 1000; i++) {
-            __NOP(); // Lệnh No-Operation của ARM
-        }
+        for (volatile int i = 0; i < 1000; i++) {}
     }
 }
 
