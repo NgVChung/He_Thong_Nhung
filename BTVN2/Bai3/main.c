@@ -87,7 +87,7 @@ uint16_t ADC1_Read(void) {
     return ADC_GetConversionValue(ADC1);
 }
 
-// Hàm hỗ trợ chuyển số nguyên thành chuỗi
+// Hàm chuyển số nguyên thành chuỗi
 void uint_to_str(uint32_t val, char *str) {
     char temp[11];
     int i = 0, j = 0;
@@ -120,22 +120,18 @@ int main(void) {
     while (1) {
         uint16_t raw_adc = ADC1_Read();
         
-        // Tính toán điện áp dạng mV để tránh dùng kiểu float (VD: 3.3V = 3300mV)
+        // Tính toán điện áp dạng mV (VD: 3.3V = 3300mV)
         uint32_t mv = ((uint32_t)raw_adc * 3300) / 4095;
         uint32_t volt_int = mv / 1000;
         uint32_t volt_dec = (mv % 1000) / 10; // Lấy 2 chữ số thập phân
 
-        // Gửi kết quả qua UART
-        UART1_SendString("ADC: ");
-        uint_to_str(raw_adc, buf);
-        UART1_SendString(buf);
-
-        UART1_SendString(" | Voltage: ");
+        // Gửi duy nhất kết quả điện áp qua UART
+        UART1_SendString("Voltage: ");
         uint_to_str(volt_int, buf);
         UART1_SendString(buf);
         UART1_SendString(".");
 
-        // Đảm bảo in luôn đúng 2 chữ số thập phân
+        // Hiển thị chuẩn 2 chữ số thập phân
         UART1_SendChar((volt_dec / 10) + '0');
         UART1_SendChar((volt_dec % 10) + '0');
         UART1_SendString("V\r\n");
