@@ -127,9 +127,10 @@ void Process_Command(char *cmd) {
             }
             sprintf(response, "OK: PWM Set to %d%%!\r\n", percent);
             UART_SendString(response);
-        } else {
+        } 
+        /*else {
             UART_SendString("ERR: Invalid PWM value!\r\n");
-        }
+        } */
     } 
     // Lệnh Status!
     else if (strcmp(cmd, "Status") == 0) {
@@ -137,9 +138,9 @@ void Process_Command(char *cmd) {
         sprintf(response, "Status: LED=%s, PWM=%d%%!\r\n", (led_status ? "ON" : "OFF"), current_percent);
         UART_SendString(response);
     } 
-    else {
+    /*else {
         UART_SendString("ERR: Unknown Command!\r\n");
-    }
+    } */
 }
 
 int main(void) {
