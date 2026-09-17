@@ -4,26 +4,26 @@
 
 /* Các biến đếm ngắt (phải có volatile để tránh tối ưu hóa bộ nhớ) */
 volatile uint32_t count_led01hz = 0;
-volatile uint32_t count_led1hz  = 0;
+volatile uint32_t count_led1hz  = 0; 
 volatile uint32_t count_led10hz = 0;
 
 /* Trình xử lý ngắt SysTick - Tự động gọi mỗi 1ms */
 void SysTick_Handler(void) {
     // LED 1 (0.1Hz) - Chân PA0: Đảo trạng thái mỗi 5000ms (5s sáng, 5s tắt)
     if (++count_led01hz >= 5000) {
-        GPIO_WriteBit(GPIOA, GPIO_Pin_0, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_0)));
+        GPIOA->ODR ^= GPIO_Pin_0;  // Dùng thanh ghi ODR để đảo trạng thái LED
         count_led01hz = 0;
     }
 
     // LED 2 (1Hz) - Chân PA1: Đảo trạng thái mỗi 500ms (0.5s sáng, 0.5s tắt)
     if (++count_led1hz >= 500) {
-        GPIO_WriteBit(GPIOA, GPIO_Pin_1, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_1)));
+        GPIOA->ODR ^= GPIO_Pin_1;
         count_led1hz = 0;
     }
 
     // LED 3 (10Hz) - Chân PA2: Đảo trạng thái mỗi 50ms (50ms sáng, 50ms tắt)
     if (++count_led10hz >= 50) {
-        GPIO_WriteBit(GPIOA, GPIO_Pin_2, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_2)));
+        GPIOA->ODR ^= GPIO_Pin_2;
         count_led10hz = 0;
     }
 }

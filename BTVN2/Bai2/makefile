@@ -1,66 +1,107 @@
-# Trình biên dịch và các công cụ
-CC      = arm-none-eabi-gcc
-OBJCOPY = arm-none-eabi-objcopy
-SIZE    = arm-none-eabi-size
+##############################################################################
+# Makefile cho STM32F10x (Standard Peripheral Library) - biên dịch trên Linux
+##############################################################################
 
-# Tên file đầu ra
-TARGET  = BAI2
+# ============== 1. CẤU HÌNH CHIP ==============
+DEVICE_DEFS = -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER
 
-# Kiến trúc và Cờ biên dịch (CFLAGS)
-MCU     = -mcpu=cortex-m3 -mthumb -mfloat-abi=soft
-DEFINES = -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER
+# Tên file output
+TARGET = main
 
-# Đường dẫn đến các thư mục Header (.h)
-INCLUDES = -I. \
-           -I./Libraries/CMSIS/CM3/CoreSupport \
-           -I./Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x \
-           -I./Libraries/STM32F10x_StdPeriph_Driver/inc
+# ============== 2. TOOLCHAIN ==============
+PREFIX  = arm-none-eabi-
+CC      = $(PREFIX)gcc
+AS      = $(PREFIX)gcc
+LD      = $(PREFIX)gcc
+OBJCOPY = $(PREFIX)objcopy
+OBJDUMP = $(PREFIX)objdump
+SIZE    = $(PREFIX)size
 
-CFLAGS  = $(MCU) $(DEFINES) $(INCLUDES) -O0 -g -Wall
+# ============== 3. THƯ MỤC ==============
+CMSIS_CORE   = Libraries/CMSIS/CM3/CoreSupport
+CMSIS_DEVICE = Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
+SPL_INC      = Libraries/STM32F10x_StdPeriph_Driver/inc
+SPL_SRC      = Libraries/STM32F10x_StdPeriph_Driver/src
 
-# Cờ dành cho Linker (LDFLAGS)
-LDFLAGS = -Tlinker.ld $(MCU) --specs=nano.specs --specs=nosys.specs
+# Đường dẫn chính xác theo kết quả find của bạn:
+STARTUP_DIR  = $(CMSIS_DEVICE)/startup/gcc_ride7
+STARTUP_FILE = $(STARTUP_DIR)/startup_stm32f10x_md.s
 
-# Đường dẫn file Startup (.s)
-STARTUP_SRC = Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/gcc_ride7/startup_stm32f10x_md.s
+# Linker script
+LDSCRIPT = linker.ld
 
-# Danh sách các file nguồn C (.c)
-C_SRCS = main.c \
-         Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c \
-         Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c \
-         Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c \
-         Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c \
-         Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c \
-         Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c
+# ============== 4. FILE NGUỒN ==============
+C_SOURCES = main.c
+C_SOURCES += $(CMSIS_DEVICE)/system_stm32f10x.c
+C_SOURCES += $(wildcard $(SPL_SRC)/*.c)
 
-# Danh sách các file Object (.o) tạo ra
-OBJS = $(C_SRCS:.c=.o) startup_stm32f10x_md.o
+# ============== 5. INCLUDE PATH ==============
+INCLUDES  = -I.
+INCLUDES += -I$(CMSIS_CORE)
+INCLUDES += -I$(CMSIS_DEVICE)
+INCLUDES += -I$(SPL_INC)
 
-# Quy tắc mặc định (Build tất cả)
-all: $(TARGET).elf $(TARGET).bin $(TARGET).hex
+# ============== 6. CỜ BIÊN DỊCH ==============
+MCU_FLAGS = -mcpu=cortex-m3 -mthumb
+
+CFLAGS  = $(MCU_FLAGS) $(DEVICE_DEFS) $(INCLUDES)
+CFLAGS += -Wall -O2 -g -std=gnu99
+CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -MMD -MP
+
+ASFLAGS = $(MCU_FLAGS) -x assembler-with-cpp
+
+LDFLAGS  = $(MCU_FLAGS) -T$(LDSCRIPT)
+LDFLAGS += -nostartfiles -Wl,--gc-sections
+LDFLAGS += -specs=nano.specs -specs=nosys.specs
+LDFLAGS += -Wl,-Map=$(TARGET).map
+
+# ============== 7. OBJECT FILES ==============
+OBJDIR = build
+
+C_OBJECTS   = $(addprefix $(OBJDIR)/, $(notdir $(C_SOURCES:.c=.o)))
+STARTUP_OBJ = $(OBJDIR)/startup_stm32f10x_md.o
+
+OBJECTS = $(C_OBJECTS) $(STARTUP_OBJ)
+
+# VPATH giúp make tìm file .c ở đúng thư mục con tương ứng
+VPATH = . $(CMSIS_DEVICE) $(SPL_SRC)
+
+# ============== 8. RULES ==============
+all: $(OBJDIR) $(TARGET).elf $(TARGET).hex $(TARGET).bin
 	$(SIZE) $(TARGET).elf
 
-# Tạo file .elf từ các file .o
-$(TARGET).elf: $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) -o $@
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
-# Quy tắc dịch file .c sang .o
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Rule biên dịch file .c (dùng VPATH)
+$(OBJDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
 
-# Quy tắc dịch file Startup .s sang .o (Đã sửa đường dẫn đúng)
-startup_stm32f10x_md.o: $(STARTUP_SRC)
-	$(CC) $(CFLAGS) -c $< -o $@
+# Rule RIÊNG cho file startup (đường dẫn tường minh, không phụ thuộc VPATH)
+$(STARTUP_OBJ): $(STARTUP_FILE)
+	$(AS) -c $(ASFLAGS) $< -o $@
 
-# Quy tắc tạo file .bin và .hex để nạp vào vi điều khiển
-%.bin: %.elf
-	$(OBJCOPY) -O binary $< $@
+$(TARGET).elf: $(OBJECTS)
+	$(LD) $(OBJECTS) $(LDFLAGS) -o $@
 
-%.hex: %.elf
+$(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
 
-# Quy tắc dọn dẹp các file trung gian
-clean:
-	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin $(TARGET).hex
+$(TARGET).bin: $(TARGET).elf
+	$(OBJCOPY) -O binary $< $@
 
-.PHONY: all clean
+clean:
+	rm -rf $(OBJDIR) $(TARGET).elf $(TARGET).hex $(TARGET).bin $(TARGET).map
+
+# ============== 9. NẠP CODE ==============
+flash: $(TARGET).bin
+	st-flash write $(TARGET).bin 0x8000000
+
+flash-openocd: $(TARGET).elf
+	openocd -f interface/stlink.cfg -f target/stm32f1x.cfg \
+		-c "program $(TARGET).elf verify reset exit"
+
+-include $(wildcard $(OBJDIR)/*.d)
+
+.PHONY: all clean flash flash-openocd
