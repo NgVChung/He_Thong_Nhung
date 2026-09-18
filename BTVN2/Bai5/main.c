@@ -144,13 +144,7 @@ int main(void) {
 
     while (1) {
         if (command_ready) {
-            // 1. Thực thi lệnh
             Process_Command((char *)rx_buffer);
-            
-            // 2. Xóa sạch bộ đệm
-           // memset((void *)rx_buffer, 0, RX_BUFFER_SIZE);
-            
-            // 3. Cho phép ISR nhận lệnh tiếp theo (ĐẶT Ở CUỐI)
             command_ready = 0;
         }
     }
