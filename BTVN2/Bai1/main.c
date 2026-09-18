@@ -6,10 +6,6 @@
 
 #define RX_BUFFER_SIZE 128
 
-// Cấu hình Mã lớp và Mã nhóm
-#define MA_LOP   "HTN"   // Thay bằng Mã lớp thực tế
-#define MA_NHOM  "N03"  // Thay bằng Mã nhóm thực tế
-
 volatile char rx_buffer[RX_BUFFER_SIZE];
 volatile uint8_t rx_index = 0;
 
@@ -80,7 +76,7 @@ void USART1_IRQHandler(void)
     // Kiểm tra đúng cờ ngắt RXNE
     if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
     {
-        // Đọc dữ liệu giải phóng thanh ghi DR
+        // Đọc dữ liệu thanh ghi DR
         char rx_char = (char)USART_ReceiveData(USART1);
 
         // Trường hợp 1: Gặp ký tự kết thúc '!'
@@ -91,31 +87,22 @@ void USART1_IRQHandler(void)
                 rx_buffer[rx_index] = '\0'; // Thêm ký tự kết thúc chuỗi C
 
                 USART1_SendString("\r\n");
-                USART1_SendString(MA_LOP);
-                USART1_SendString(MA_NHOM);
+                USART1_SendString("HTN");
+                USART1_SendString("N03");
                 USART1_SendString(": ");
                 USART1_SendString((char*)rx_buffer);
                 USART1_SendString("\r\n");
 
-                rx_index = 0; // Reset bộ đệm
+                rx_index = 0; 
             }
         }
-        // Trường hợp 2: Xử lý phím Backspace (xóa ký tự gõ sai)
-        else if (rx_char == '\b' || rx_char == 127)
-        {
-            if (rx_index > 0)
-            {
-                rx_index--;
-                USART1_SendString("\b \b"); // Xóa ký tự trên màn hình Terminal
-            }
-        }
-        // Trường hợp 3: Lưu ký tự bình thường vào bộ đệm
+        // Trường hợp 2: Lưu ký tự bình thường vào bộ đệm
         else
         {
             if (rx_index < RX_BUFFER_SIZE - 1)
             {
                 rx_buffer[rx_index++] = rx_char;
-                USART1_SendChar(rx_char); // Eco trực tiếp từng ký tự ra màn hình
+                USART1_SendChar(rx_char); 
             }
         }
 
@@ -127,12 +114,5 @@ void USART1_IRQHandler(void)
 int main(void)
 {
     USART1_Init();
-
-    // Thông báo khi khởi động
-    USART1_SendString("\r\nSTM32 Ready! Nhap ban tin va ket thuc bang dau !\r\n");
-
-    while (1)
-    {
-        // Luồng chính rảnh rỗi
-    }
+    while (1);
 }
