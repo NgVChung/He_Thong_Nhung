@@ -50,70 +50,36 @@ void PWM_TIM2_Init(void)
     );
 
     /* Cấu hình PWM mode 1 */
-    TIM_OCInitStructure.TIM_OCMode =
-        TIM_OCMode_PWM1;
+    TIM_OCInitStructure.TIM_OCMode =TIM_OCMode_PWM1;
 
-    TIM_OCInitStructure.TIM_OutputState =
-        TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_OutputState =TIM_OutputState_Enable;
 
-    TIM_OCInitStructure.TIM_OCPolarity =
-        TIM_OCPolarity_High;
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
     /* PA0 - 10% */
     TIM_OCInitStructure.TIM_Pulse = 100;
 
-    TIM_OC1Init(
-        TIM2,
-        &TIM_OCInitStructure
-    );
+    TIM_OC1Init(TIM2,&TIM_OCInitStructure);
 
-    TIM_OC1PreloadConfig(
-        TIM2,
-        TIM_OCPreload_Enable
-    );
+    TIM_OC1PreloadConfig(TIM2,TIM_OCPreload_Enable);
 
     /* PA1 - 30% */
     TIM_OCInitStructure.TIM_Pulse = 300;
-
-    TIM_OC2Init(
-        TIM2,
-        &TIM_OCInitStructure
-    );
-
-    TIM_OC2PreloadConfig(
-        TIM2,
-        TIM_OCPreload_Enable
-    );
+    TIM_OC2Init(TIM2,&TIM_OCInitStructure);
+    TIM_OC2PreloadConfig(TIM2,TIM_OCPreload_Enable);
 
     /* PA2 - 50% */
     TIM_OCInitStructure.TIM_Pulse = 500;
-
-    TIM_OC3Init(
-        TIM2,
-        &TIM_OCInitStructure
-    );
-
-    TIM_OC3PreloadConfig(
-        TIM2,
-        TIM_OCPreload_Enable
-    );
+    TIM_OC3Init(TIM2,&TIM_OCInitStructure);
+    TIM_OC3PreloadConfig(TIM2,TIM_OCPreload_Enable);
 
     /* PA3 - 70% */
     TIM_OCInitStructure.TIM_Pulse = 700;
-
-    TIM_OC4Init(
-        TIM2,
-        &TIM_OCInitStructure
-    );
-
-    TIM_OC4PreloadConfig(
-        TIM2,
-        TIM_OCPreload_Enable
-    );
+    TIM_OC4Init(TIM2,&TIM_OCInitStructure);
+    TIM_OC4PreloadConfig(TIM2,TIM_OCPreload_Enable);
 
     /* Cho phép preload ARR */
     TIM_ARRPreloadConfig(TIM2, ENABLE);
-
     /* Bắt đầu Timer */
     TIM_Cmd(TIM2, ENABLE);
 }
