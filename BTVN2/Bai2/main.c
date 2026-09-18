@@ -48,11 +48,10 @@ int main(void) {
 
     // Cấu hình SysTick tạo ngắt mỗi 1ms (Sử dụng xung SystemCoreClock)
     if (SysTick_Config(SystemCoreClock / 1000)) {
-        while (1); // Lỗi cấu hình SysTick
+        while (1); 
     }
 
     // Vòng lặp chính chờ ngắt
     while (1) {
-        __NOP();
     }
 }
