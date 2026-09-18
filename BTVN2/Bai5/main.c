@@ -128,9 +128,6 @@ void Process_Command(char *cmd) {
             sprintf(response, "OK: PWM Set to %d%%!\r\n", percent);
             UART_SendString(response);
         } 
-        /*else {
-            UART_SendString("ERR: Invalid PWM value!\r\n");
-        } */
     } 
     // Lệnh Status!
     else if (strcmp(cmd, "Status") == 0) {
@@ -138,9 +135,6 @@ void Process_Command(char *cmd) {
         sprintf(response, "Status: LED=%s, PWM=%d%%!\r\n", (led_status ? "ON" : "OFF"), current_percent);
         UART_SendString(response);
     } 
-    /*else {
-        UART_SendString("ERR: Unknown Command!\r\n");
-    } */
 }
 
 int main(void) {
@@ -154,7 +148,7 @@ int main(void) {
             Process_Command((char *)rx_buffer);
             
             // 2. Xóa sạch bộ đệm
-            memset((void *)rx_buffer, 0, RX_BUFFER_SIZE);
+           // memset((void *)rx_buffer, 0, RX_BUFFER_SIZE);
             
             // 3. Cho phép ISR nhận lệnh tiếp theo (ĐẶT Ở CUỐI)
             command_ready = 0;
