@@ -37,30 +37,21 @@ void PWM_TIM2_Init(void)
      */
 
     TIM_TimeBaseStructure.TIM_Prescaler = 71;
-    TIM_TimeBaseStructure.TIM_CounterMode =
-        TIM_CounterMode_Up;
+    TIM_TimeBaseStructure.TIM_CounterMode =TIM_CounterMode_Up;
     TIM_TimeBaseStructure.TIM_Period = 999;
-    TIM_TimeBaseStructure.TIM_ClockDivision =
-        TIM_CKD_DIV1;
+    TIM_TimeBaseStructure.TIM_ClockDivision =TIM_CKD_DIV1;
     TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 
-    TIM_TimeBaseInit(
-        TIM2,
-        &TIM_TimeBaseStructure
-    );
+    TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 
     /* Cấu hình PWM mode 1 */
     TIM_OCInitStructure.TIM_OCMode =TIM_OCMode_PWM1;
-
     TIM_OCInitStructure.TIM_OutputState =TIM_OutputState_Enable;
-
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
     /* PA0 - 10% */
     TIM_OCInitStructure.TIM_Pulse = 100;
-
     TIM_OC1Init(TIM2,&TIM_OCInitStructure);
-
     TIM_OC1PreloadConfig(TIM2,TIM_OCPreload_Enable);
 
     /* PA1 - 30% */
