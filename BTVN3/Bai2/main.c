@@ -34,66 +34,49 @@ void SPI1_Init(void)
 
     /* Bật clock GPIOA + AFIO + SPI1 */
     RCC_APB2PeriphClockCmd(
-        RCC_APB2Periph_GPIOA |
-        RCC_APB2Periph_AFIO |
-        RCC_APB2Periph_SPI1,
+        RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO | RCC_APB2Periph_SPI1,
         ENABLE
     );
 
     /* PA5 = SCK
        PA7 = MOSI */
-    GPIO_InitStructure.GPIO_Pin =
-        GPIO_Pin_5 | GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_7;
 
-    GPIO_InitStructure.GPIO_Mode =
-        GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 
-    GPIO_InitStructure.GPIO_Speed =
-        GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     /* PA4 = CS */
-    GPIO_InitStructure.GPIO_Pin =
-        GPIO_Pin_4;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 
-    GPIO_InitStructure.GPIO_Mode =
-        GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 
-    GPIO_InitStructure.GPIO_Speed =
-        GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     CS_HIGH();
 
     /* SPI1 Master */
-    SPI_InitStructure.SPI_Direction =
-        SPI_Direction_1Line_Tx;
+    SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
 
-    SPI_InitStructure.SPI_Mode =
-        SPI_Mode_Master;
+    SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
 
-    SPI_InitStructure.SPI_DataSize =
-        SPI_DataSize_8b;
+    SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
 
-    SPI_InitStructure.SPI_CPOL =
-        SPI_CPOL_Low;
+    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
 
-    SPI_InitStructure.SPI_CPHA =
-        SPI_CPHA_1Edge;
+    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
 
-    SPI_InitStructure.SPI_NSS =
-        SPI_NSS_Soft;
+    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
 
-    SPI_InitStructure.SPI_BaudRatePrescaler =
-        SPI_BaudRatePrescaler_16;
+    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
 
-    SPI_InitStructure.SPI_FirstBit =
-        SPI_FirstBit_MSB;
+    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
 
-    SPI_InitStructure.SPI_CRCPolynomial =
-        7;
+    SPI_InitStructure.SPI_CRCPolynomial = 7;
 
     SPI_Init(SPI1, &SPI_InitStructure);
 
@@ -211,23 +194,6 @@ const uint8_t FONT_I[8] =
 };
 
 
-/* =================================================
-   XOAY FONT 90° SANG TRÁI
-
-   Hướng mong muốn:
-
-             MA TRẬN LED
-          ┌──────────────┐
-          │      P       │
-          │      P       │
-          │      P       │
-          │      P       │
-          └──────────────┘
-                 ↓
-              CHÂN CẮM
-                 ↓
-              CON CHIP
-   ================================================= */
 
 void Display_Letter(const uint8_t *font)
 {
