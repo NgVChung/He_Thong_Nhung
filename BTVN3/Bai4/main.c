@@ -65,7 +65,7 @@ void GPIO_ADC_Init(void) {
 }
 
 /* --- 3. Cấu hình Timer 3 tần số 100Hz phát xung Trigger TRGO --- */
-void TIM2_Init(void) {
+void TIM3_Init(void) {
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -180,7 +180,7 @@ int main(void) {
     GPIO_ADC_Init();
     DMA1_Init();
     ADC1_Init();
-    TIM2_Init(); // Bật Timer2 bắt đầu đếm và bắn Trigger
+    TIM3_Init(); // Bật Timer2 bắt đầu đếm và bắn Trigger
 
     while (1) {
         // Xử lý an toàn nửa đầu bộ đệm khi nhận ngắt HT (0.5 giây đầu)
