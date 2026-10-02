@@ -116,18 +116,3 @@ int main(void)
     }
 }
 
-/* Hàm hỗ trợ cấp phát động newlib nano (khắc phục lỗi undefined reference to 'end') */
-caddr_t _sbrk(int incr)
-{
-    extern char _ebss;
-    static char *heap_end;
-    char *prev_heap_end;
-
-    if (heap_end == 0) {
-        heap_end = &_ebss;
-    }
-    prev_heap_end = heap_end;
-    heap_end += incr;
-
-    return (caddr_t) prev_heap_end;
-}
