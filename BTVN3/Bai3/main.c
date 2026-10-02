@@ -1,12 +1,9 @@
 #include "stm32f10x.h"
 #include <stdio.h>
 #include <string.h>
-#include <errno.h>
-#include <sys/types.h>
 
-/* Cập nhật thông tin Lớp và Nhóm của bạn theo yêu cầu đề bài */
-#define ID_LOP    "HTN"   // Thay bằng mã lớp của bạn
-#define ID_NHOM   "N03"      // Thay bằng mã nhóm của bạn
+#define ID_LOP    "HTN"  
+#define ID_NHOM   "N03"      
 
 uint32_t btn_counter = 0;
 char tx_buffer[64];
@@ -78,10 +75,9 @@ void DMA_Send_Packet(const char *data, uint16_t length)
 }
 
 /* Hàm trễ mềm khử rung phím */
-void Simple_Delay(volatile uint32_t count)
+void Delay(volatile uint32_t count)
 {
     while (count--) {
-        __NOP();
     }
 }
 
@@ -95,7 +91,7 @@ int main(void)
         // Khi nhấn nút PA0 (mức logic 0 do kéo lên Pull-up)
         if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == Bit_RESET)
         {
-            Simple_Delay(72000 * 20); // Debounce ~20ms
+            Delay(72000 * 20); 
 
             if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == Bit_RESET)
             {

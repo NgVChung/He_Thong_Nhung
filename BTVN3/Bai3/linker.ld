@@ -74,6 +74,10 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;         /* Mốc kết thúc vùng .bss trong RAM */
     __bss_end__ = _ebss;
+
+    /* Cập nhật: Khai báo mốc kết thúc RAM data dùng làm điểm bắt đầu cho Heap (_sbrk) */
+    end = .;
+    _end = .;
   } > RAM
 
   /* 7. Kiểm tra loại bỏ các rác bộ nhớ không dùng */
