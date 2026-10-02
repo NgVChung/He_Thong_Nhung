@@ -214,27 +214,30 @@ float BMP280_Compensate_Temperature(int32_t adc_T) {
     return (float)((t_fine * 5 + 128) >> 8) / 100.0f;
 }
 
-/* --- Thuật toán bù áp suất theo Datasheet Bosch --- */
-float BMP280_Compensate_Pressure(int32_t adc_P) {
-    int64_t var1, var2, p;
-    var1 = ((int64_t)t_fine) - 128000;
-    var2 = var1 * var1 * (int64_t)dig_P6;
-    var2 = var2 + ((var1 * (int64_t)dig_P5) << 17);
-    var2 = var2 + (((int64_t)dig_P4) << 35);
-    var1 = ((var1 * var1 * (int64_t)dig_P3) >> 8) + ((var1 * (int64_t)dig_P2) << 12);
-    var1 = (((((int64_t)1) << 47) + var1)) * ((int64_t)dig_P1) >> 33;
+/* --- Thuật toán bù áp suất 32-bit theo Datasheet Bosch --- */
+float BMP280_Compensate_Pressure(int32_t adc_P)
+{
+    int32_t var1, var2;
+    uint32_t p;
 
-    if (var1 == 0) return 0.0f;
-
-    p = 1048576 - adc_P;
-    p = (((p << 31) - var2) * 3125) / var1;
-    var1 = (((int64_t)dig_P9) * (p >> 13) * (p >> 13)) >> 25;
-    var2 = (((int64_t)dig_P8) * p) >> 19;
-    p = ((p + var1 + var2) >> 8) + (((int64_t)dig_P7) << 4);
-
-    return (float)p / 25600.0f; // Đơn vị: hPa
+    var1 = (t_fine >> 1) - 64000;
+    var2 = (((var1 >> 2) * (var1 >> 2)) >> 11) * (int32_t)dig_P6;
+    var2 = var2 + ((var1 * (int32_t)dig_P5) << 1);
+    var2 = (var2 >> 2) + ((int32_t)dig_P4 << 16);
+    var1 = (((dig_P3 * (((var1 >> 2) * (var1 >> 2)) >> 13)) >> 3) + (((int32_t)dig_P2 * var1) >> 1))>> 18;
+    var1 = ((32768 + var1) * (int32_t)dig_P1) >> 15;
+    if (var1 == 0)
+        return 0.0f;
+    p = ((uint32_t)(1048576 - adc_P) - (uint32_t)(var2 >> 12)) * 3125;
+    if (p < 0x80000000)
+        p = (p << 1) / (uint32_t)var1;
+    else
+        p = (p / (uint32_t)var1) * 2;
+    var1 = ((int32_t)dig_P9 * (int32_t)(((p >> 3) * (p >> 3)) >> 13)) >> 12;
+    var2 = ((int32_t)(p >> 2) * (int32_t)dig_P8) >> 13;
+    p = (uint32_t)((int32_t)p + ((var1 + var2 + (int32_t)dig_P7) >> 4));
+    return (float)p / 100.0f;   // Pa → hPa
 }
-
 /* --- Đọc dữ liệu --- */
 void BMP280_ReadRaw(float *temp, float *press) {
     uint8_t data[6];
