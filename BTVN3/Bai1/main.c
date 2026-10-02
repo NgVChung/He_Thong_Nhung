@@ -86,39 +86,31 @@ void I2C1_Init(void) {
 
     I2C_Cmd(I2C1, ENABLE);
 }
-
 /* --- Đọc 1 byte từ thanh ghi I2C --- */
 uint8_t I2C_ReadReg(uint8_t devAddr, uint8_t regAddr) {
     uint8_t data = 0;
-    uint32_t timeout = 50000;
 
-    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY)) { if (--timeout == 0) return 0; }
+    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
 
     I2C_GenerateSTART(I2C1, ENABLE);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)) { if (--timeout == 0) return 0; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
     I2C_Send7bitAddress(I2C1, devAddr, I2C_Direction_Transmitter);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) { if (--timeout == 0) return 0; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
     I2C_SendData(I2C1, regAddr);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED)) { if (--timeout == 0) return 0; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
     I2C_GenerateSTART(I2C1, ENABLE);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)) { if (--timeout == 0) return 0; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
     I2C_Send7bitAddress(I2C1, devAddr, I2C_Direction_Receiver);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)) { if (--timeout == 0) return 0; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
 
     I2C_AcknowledgeConfig(I2C1, DISABLE);
     I2C_GenerateSTOP(I2C1, ENABLE);
 
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED)) { if (--timeout == 0) return 0; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
     data = I2C_ReceiveData(I2C1);
 
     I2C_AcknowledgeConfig(I2C1, ENABLE);
@@ -127,39 +119,29 @@ uint8_t I2C_ReadReg(uint8_t devAddr, uint8_t regAddr) {
 
 /* --- Đọc nhiều byte từ I2C --- */
 void I2C_ReadMultiReg(uint8_t devAddr, uint8_t regAddr, uint8_t *pBuffer, uint16_t length) {
-    uint32_t timeout = 50000;
-
-    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY)) { if (--timeout == 0) return; }
+    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
 
     I2C_GenerateSTART(I2C1, ENABLE);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
     I2C_Send7bitAddress(I2C1, devAddr, I2C_Direction_Transmitter);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
     I2C_SendData(I2C1, regAddr);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
     I2C_GenerateSTART(I2C1, ENABLE);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
     I2C_Send7bitAddress(I2C1, devAddr, I2C_Direction_Receiver);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
 
     while (length) {
         if (length == 1) {
             I2C_AcknowledgeConfig(I2C1, DISABLE);
             I2C_GenerateSTOP(I2C1, ENABLE);
         }
-        timeout = 50000;
-        while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED)) {
-            if (--timeout == 0) return;
-        }
+        while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
         *pBuffer = I2C_ReceiveData(I2C1);
         pBuffer++;
         length--;
@@ -169,29 +151,22 @@ void I2C_ReadMultiReg(uint8_t devAddr, uint8_t regAddr, uint8_t *pBuffer, uint16
 
 /* --- Ghi 1 byte vào thanh ghi I2C --- */
 void I2C_WriteReg(uint8_t devAddr, uint8_t regAddr, uint8_t value) {
-    uint32_t timeout = 50000;
-
-    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY)) { if (--timeout == 0) return; }
+    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
 
     I2C_GenerateSTART(I2C1, ENABLE);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
     I2C_Send7bitAddress(I2C1, devAddr, I2C_Direction_Transmitter);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
     I2C_SendData(I2C1, regAddr);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
     I2C_SendData(I2C1, value);
-    timeout = 50000;
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED)) { if (--timeout == 0) return; }
+    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
     I2C_GenerateSTOP(I2C1, ENABLE);
 }
-
 /* --- Đọc các hệ số hiệu chuẩn --- */
 void BMP280_ReadCalibration(void) {
     uint8_t calib[24];
